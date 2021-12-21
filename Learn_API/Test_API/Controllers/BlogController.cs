@@ -64,7 +64,7 @@ namespace Test_API.Controllers
             existingBlog.IsDeleted = blog.IsDeleted;
             _context.SaveChanges();
 
-            return Content($"Succecfully update blog {blog.BlogId}, URL: {blog.Url}, Rating: {blog.Rating}");
+            return Content($"Successfully update blog {blog.BlogId}, URL: {blog.Url}, Rating: {blog.Rating}");
             
         }
         // DELETE
@@ -79,7 +79,7 @@ namespace Test_API.Controllers
             _context.Blogs.Remove(delBlog);
             _context.SaveChanges();
 
-            return Content($"Succecfully DELETE blog {id}");
+            return Content($"Successfully DELETE blog {id}");
         }
         
     }
