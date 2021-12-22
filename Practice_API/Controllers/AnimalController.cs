@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
@@ -50,7 +50,14 @@ namespace Practice_API.Controllers
                 return BadRequest();
 
             }
-            _context.Animals.Add(animal as Animal);
+            _context.Animals.Add(new Animal()
+            {
+                AnimalId = animal.AnimalId,
+                Name = animal.Name,
+                Type = animal.Type,
+                IsMale = animal.IsMale
+                
+            });
             _context.SaveChanges();
             return Content($"Successfully post AnimalId: {animal.AnimalId}, name: {animal.Name}, type: {animal.Type}, IsMale:{animal.IsMale}");
         }
@@ -65,10 +72,16 @@ namespace Practice_API.Controllers
                 return BadRequest();
 
             }
-            _context.Foods.Add(food as Food);
+            _context.Foods.Add(new Food()
+            {
+                FoodId = food.FoodId,
+                FoodName = food.FoodName,
+                NumberofCans = food.NumberofCans
+            });
             _context.SaveChanges();
             return Content($"Successfully post FoodId: {food.FoodId}, name: {food.FoodName}, Quantity: {food.NumberofCans}");
         }
+        
         
         // POST FoodDistribution
         [HttpPost("FoodDistribution/Post")]
@@ -76,11 +89,25 @@ namespace Practice_API.Controllers
         {
             var checkAnimal = _context.Animals.SingleOrDefault(a => a.AnimalId == foodDistribution.AnimalId);
             var checkFood = _context.Foods.SingleOrDefault(f => f.FoodId == foodDistribution.FoodId);
-            if (checkAnimal is  null && checkFood is  null)
+            var existingDisA = _context.FoodDistributions.SingleOrDefault(d => d.AnimalId == foodDistribution.AnimalId);
+            var existingDisF = _context.FoodDistributions.SingleOrDefault(d => d.FoodId == foodDistribution.FoodId);
+            
+            if (checkAnimal is null || checkFood is null)
+            {
+                return NotFound();
+            }
+            if (existingDisA is not null && existingDisF is not null)
             {
                 return BadRequest();
             }
-            _context.FoodDistributions.Add(foodDistribution as FoodDistribution);
+            
+            _context.FoodDistributions.Add(new FoodDistribution()
+            {
+                AnimalId = foodDistribution.AnimalId,
+                FoodId = foodDistribution.FoodId,
+                Quantity = foodDistribution.Quantity,
+                IsEnough = foodDistribution.IsEnough
+            });
             _context.SaveChanges();
             return Content($"Successfully post FoodDistribution idA: {foodDistribution.AnimalId}, idF: {foodDistribution.FoodId}, quantity: {foodDistribution.Quantity}, IsEnough:{foodDistribution.IsEnough}");
         }
