@@ -26,11 +26,33 @@ namespace Practice_API.Controllers
             return await _context.Animals.ToListAsync();
         }
         
+        // GET  Animal id 
+        [HttpGet ("Animal/Get/{id}")]
+        public async Task<ActionResult<Animal>> GetAnimalId(int id)
+        {
+            var existingAnimal = await _context.Animals.FindAsync(id);
+            if (existingAnimal == null)
+                return NotFound();
+
+            return Ok(existingAnimal);
+        }
+        
         // GET ALL Food 
         [HttpGet ("Food/All")]
         public async Task<ActionResult<IEnumerable<Food>>> GetAllFood()
         {
             return await _context.Foods.ToListAsync();
+        }
+        
+        // GET  Food id 
+        [HttpGet ("Food/Get/{id}")]
+        public async Task<ActionResult<Food>> GetFoodId(int id)
+        {
+            var existingFood = await _context.Foods.FindAsync(id);
+            if (existingFood == null)
+                return NotFound();
+
+            return Ok( existingFood);
         }
         
         // GET ALL FoodDítribution 
@@ -40,139 +62,157 @@ namespace Practice_API.Controllers
             return await _context.FoodDistributions.ToListAsync();
         }
         
+        // GET  FoodDistribution id 
+        [HttpGet ("FoodDistribution/Get/{Animal_Id}")]
+        public async Task<ActionResult<FoodDistribution>> GetFoodDistributionIdAnimal(int Animal_Id,int Food_Id)
+        {
+            var checkA = _context.FoodDistributions.SingleOrDefault(a => a.AnimalId==Animal_Id);
+            var checkF = _context.FoodDistributions.SingleOrDefault(f => f.FoodId == Food_Id);
+            if (checkA is null || checkF is null)
+                return BadRequest();
+            if (checkA.FoodId != checkF.FoodId)
+                return NotFound();
+            var result= $"FoodDistribution AnimalId: {checkA.AnimalId}, idF: {checkA.FoodId}, quantity: {checkA.Quantity}, IsEnough:{checkA.IsEnough}";
+            return Ok(result);
+        }
+        
         // POST Animal
         [HttpPost("Animal/Post")]
-        public async Task<ActionResult<Animal>> CreateAnimal(Animal animal)
+        public async Task<ActionResult<AnimalDto>> CreateAnimal(AnimalInputDto input)
         {
-            var existingAnimal = _context.Animals.SingleOrDefault(a => a.AnimalId == animal.AnimalId);
-            if (existingAnimal is not null)
+            var inputAnimal = new AnimalDto()
             {
-                return BadRequest();
+                Name = input.Name,
+                Type = input.Type,
+                IsMale = input.IsMale
+            };
 
-            }
-            _context.Animals.Add(new Animal()
+            var animal = new Animal()
             {
-                AnimalId = animal.AnimalId,
-                Name = animal.Name,
-                Type = animal.Type,
-                IsMale = animal.IsMale
-                
-            });
+                Name = inputAnimal.Name,
+                Type = inputAnimal.Type,
+                IsMale = inputAnimal.IsMale
+            };
+
+            _context.Animals.Add(animal);
+
             _context.SaveChanges();
-            return Content($"Successfully post AnimalId: {animal.AnimalId}, name: {animal.Name}, type: {animal.Type}, IsMale:{animal.IsMale}");
+            
+            
+            return CreatedAtAction(nameof(CreateAnimal)
+                , new {AnimalId = animal.AnimalId, name = animal.Name, type= animal.Type, isMale= animal.IsMale }, animal);
+          
         }
         
         // POST Food
         [HttpPost("Food/Post")]
-        public async Task<ActionResult<Food>> CreateFood(Food food)
+        public async Task<ActionResult<FoodDto>> CreateFood(FoodInputDto input)
         {
-            var existingFood = _context.Foods.SingleOrDefault(a => a.FoodId == food.FoodId);
-            if (existingFood is not null)
+            var inputFood = new FoodDto()
             {
-                return BadRequest();
+                FoodName = input.FoodName,
+                NumberofCans = input.NumberofCans
+            };
 
-            }
-            _context.Foods.Add(new Food()
+            var food = new Food()
             {
-                FoodId = food.FoodId,
-                FoodName = food.FoodName,
-                NumberofCans = food.NumberofCans
-            });
+                FoodName = inputFood.FoodName,
+                NumberofCans = inputFood.NumberofCans
+                
+            };
+
+            _context.Foods.Add(food);
+            
             _context.SaveChanges();
-            return Content($"Successfully post FoodId: {food.FoodId}, name: {food.FoodName}, Quantity: {food.NumberofCans}");
+            return CreatedAtAction(nameof(CreateFood), 
+                new { food.FoodId, food.FoodName, food.NumberofCans}, food);
         }
         
         
         // POST FoodDistribution
         [HttpPost("FoodDistribution/Post")]
-        public async Task<ActionResult<FoodDistribution>> AddFoodDistribution(FoodDistribution foodDistribution)
+        public async Task<ActionResult<FoodDistributionDto>> CreateFoodDistribution(FoodDistributionDto input)
         {
-            var checkAnimal = _context.Animals.SingleOrDefault(a => a.AnimalId == foodDistribution.AnimalId);
-            var checkFood = _context.Foods.SingleOrDefault(f => f.FoodId == foodDistribution.FoodId);
-            var existingDisA = _context.FoodDistributions.SingleOrDefault(d => d.AnimalId == foodDistribution.AnimalId);
-            var existingDisF = _context.FoodDistributions.SingleOrDefault(d => d.FoodId == foodDistribution.FoodId);
-            
+            var checkAnimal = _context.Animals.SingleOrDefault(a => a.AnimalId == input.AnimalId);
+            var checkFood = _context.Foods.SingleOrDefault(f => f.FoodId == input.FoodId);
             if (checkAnimal is null || checkFood is null)
-            {
                 return NotFound();
-            }
-            if (existingDisA is not null && existingDisF is not null)
+
+            var inputDis = new FoodDistributionDto()
             {
-                return BadRequest();
-            }
+                AnimalId = input.AnimalId,
+                FoodId = input.FoodId,
+                Quantity = input.Quantity,
+                IsEnough = input.IsEnough
+            };
             
-            _context.FoodDistributions.Add(new FoodDistribution()
+            var foodDistribution= new FoodDistribution()
             {
-                AnimalId = foodDistribution.AnimalId,
-                FoodId = foodDistribution.FoodId,
-                Quantity = foodDistribution.Quantity,
-                IsEnough = foodDistribution.IsEnough
-            });
+                AnimalId = inputDis.AnimalId,
+                FoodId = inputDis.FoodId,
+                Quantity = inputDis.Quantity,
+                IsEnough = inputDis.IsEnough
+            };
+            _context.FoodDistributions.Add(foodDistribution);
             _context.SaveChanges();
-            return Content($"Successfully post FoodDistribution idA: {foodDistribution.AnimalId}, idF: {foodDistribution.FoodId}, quantity: {foodDistribution.Quantity}, IsEnough:{foodDistribution.IsEnough}");
+            return  CreatedAtAction(nameof(CreateFoodDistribution), 
+                new {inputDis.AnimalId, inputDis.FoodId, inputDis.Quantity,inputDis.IsEnough},inputDis);
         }
         
         
         // PUT Animal
         [HttpPut("Animal/Put")]
-        public async Task<ActionResult<Animal>> PutAnimal(int id, Animal animal)
+        public async Task<ActionResult<AnimalDto>> PutAnimal(int id, AnimalInputDto input)
         {
-            
-            if (id != animal.AnimalId)
-                return BadRequest();
-            
-            var existingAnimal = _context.Animals.Where(p => p.AnimalId == animal.AnimalId).FirstOrDefault<Animal>();
-            if (existingAnimal is null)
+          
+            var animal = _context.Animals.Where(p => p.AnimalId == id).FirstOrDefault<Animal>();
+            if (animal is null)
                 return NotFound();
-            
-            existingAnimal.Name = animal.Name;
-            existingAnimal.Type = animal.Type;
-            existingAnimal.IsMale = animal.IsMale;
+
+            animal.Name = input.Name;
+            animal.Type = input.Type;
+            animal.IsMale = input.IsMale;
             _context.SaveChanges();
 
-            return Content($"Successfully update AnimalId: {animal.AnimalId}, name: {animal.Name}, type: {animal.Type}, IsMale:{animal.IsMale}");
+            return Ok($"Successfully update AnimalId: {animal.AnimalId}, name: {animal.Name}, type: {animal.Type}, IsMale:{animal.IsMale}");
             
         }
         
         // PUT Food
         [HttpPut("Food/Put")]
-        public async Task<ActionResult<Food>> PutFood(int id, Food food)
+        public async Task<ActionResult<FoodDto>> PutFood(int id, FoodInputDto input)
         {
-            
-            if (id != food.FoodId)
-                return BadRequest();
-            
-            var existingFood = _context.Foods.Where(p => p.FoodId == food.FoodId).FirstOrDefault<Food>();
-            if (existingFood is null)
+            var food = _context.Foods.Where(p => p.FoodId == id).FirstOrDefault<Food>();
+            if (food is null)
                 return NotFound();
-            
-            existingFood.FoodName = food.FoodName;
-            existingFood.NumberofCans = food.NumberofCans;
+
+            food.FoodName = input.FoodName;
+            food.NumberofCans = input.NumberofCans;
             _context.SaveChanges();
 
-            return Content($"Successfully update FoodId: {food.FoodId}, name: {food.FoodName}, Quantity: {food.NumberofCans}");
+            return Ok($"Successfully update FoodId: {food.FoodId}, name: {food.FoodName}, Quantity: {food.NumberofCans}");
         }
         
-        // PUT Food
+        // PUT FoodDistribution
         [HttpPut("FoodDistribution/Put")]
-        public async Task<ActionResult<Food>> PutFoodDistribution(int idA,int idF, FoodDistribution foodDistribution)
+        public async Task<ActionResult<FoodDistributionDto>> PutFoodDistribution(int idA,int idF, FoodDistributionUpdateDto input)
         {
-            if (idA == foodDistribution.AnimalId)
-            {
-                if (idF == foodDistribution.FoodId)
-                {
-                   var existingDis = _context.FoodDistributions.Where(p => p.AnimalId == foodDistribution.AnimalId).FirstOrDefault<FoodDistribution>();
-                   existingDis.Quantity = foodDistribution.Quantity;
-                   existingDis.IsEnough = foodDistribution.IsEnough;
-                   _context.SaveChanges();
-                   return Content($"Successfully update FoodDistribution idA: {existingDis.AnimalId}, idF: {existingDis.FoodId}, quantity: {existingDis.Quantity}, IsEnough:{existingDis.IsEnough}");
-                }
+            var foodDis = _context.FoodDistributions.Where(p => p.AnimalId == idA)
+                .FirstOrDefault<FoodDistribution>(distribution =>distribution.FoodId==idF );
+            
+            if (foodDis is null)
                 return NotFound();
-            }
-            return NotFound();
+            if (foodDis.FoodId != idF)
+                return BadRequest();
+
+            foodDis.Quantity = input.Quantity;
+            foodDis.IsEnough = input.IsEnough;
+            _context.SaveChanges();
+            
+            return Ok($"Successfully update FoodDistribution: AnimalId: {foodDis.AnimalId} FoodId: {foodDis.FoodId}, Quantity: {foodDis.Quantity}, IsEnough: {foodDis.IsEnough}");
+
         }
-        
-        
+
         // DELETE Animal
         [HttpDelete("Animal/Delete")]
         public async Task<ActionResult<Animal>> DeleteAnimal(int id)
@@ -185,7 +225,7 @@ namespace Practice_API.Controllers
             _context.Animals.Remove(delAnimal);
             _context.SaveChanges();
 
-            return Content($"Succecfully DELETE AnimalId: {delAnimal.AnimalId}; nameAnimal: {delAnimal.Name}");
+            return Ok($"Succecfully DELETE AnimalId: {delAnimal.AnimalId}; nameAnimal: {delAnimal.Name}");
         }
         
         // DELETE Food
@@ -200,22 +240,24 @@ namespace Practice_API.Controllers
             _context.Foods.Remove(delFood);
             _context.SaveChanges();
 
-            return Content($"Succecfully DELETE FoodId:{delFood.FoodId}; nameFood: {delFood.FoodName} ");
+            return Ok($"Succecfully DELETE FoodId:{delFood.FoodId}; nameFood: {delFood.FoodName} ");
         }
         
         // DELETE FoodDistribution
         [HttpDelete("FoodDistribution/Delete")]
-        public async Task<ActionResult<FoodDistribution>> DelFoodDistribution(int id)
+        public async Task<ActionResult<FoodDistributionDto>> DelFoodDistribution(int idA,int idF)
         {
-            var checkDistribution =  await  _context.FoodDistributions.FindAsync(id);
-           
-            if (checkDistribution is null )
-            {
+            var foodDis = _context.FoodDistributions.Where(p => p.AnimalId == idA)
+                .FirstOrDefault<FoodDistribution>(distribution =>distribution.FoodId==idF );
+            
+            if (foodDis is null  )
                 return NotFound();
-            }
-            _context.FoodDistributions.Remove(checkDistribution);
+            if (foodDis.FoodId != idF)
+                return BadRequest();
+            
+            _context.FoodDistributions.Remove(foodDis);
             _context.SaveChanges();
-            return Content($"Successfully remove FoodDistribution idA: {checkDistribution.AnimalId}, idF: {checkDistribution.FoodId}, quantity: {checkDistribution.Quantity}, IsEnough:{checkDistribution.IsEnough}");
+            return Ok($"Successfully remove FoodDistribution idA: {foodDis.AnimalId}, idF: {foodDis.FoodId}, quantity: {foodDis.Quantity}, IsEnough:{foodDis.IsEnough}");
         }
     }
 }
