@@ -63,16 +63,25 @@ namespace Practice_API.Controllers
         }
         
         // GET  FoodDistribution id 
-        [HttpGet ("FoodDistribution/Get/{Animal_Id}")]
+        [HttpGet ("FoodDistribution/Get/{Animal_Id}/{Food_Id}")]
         public async Task<ActionResult<FoodDistribution>> GetFoodDistributionIdAnimal(int Animal_Id,int Food_Id)
         {
-            var checkA = _context.FoodDistributions.SingleOrDefault(a => a.AnimalId==Animal_Id);
-            var checkF = _context.FoodDistributions.SingleOrDefault(f => f.FoodId == Food_Id);
-            if (checkA is null || checkF is null)
+            var foodDis = _context.FoodDistributions.Where(p => p.AnimalId == Animal_Id)
+                .FirstOrDefault<FoodDistribution>(distribution =>distribution.FoodId== Food_Id );
+            var checkAnimalID = _context.Animals.FirstOrDefault(a=>a.AnimalId == Animal_Id);
+            var checkFoodID = _context.Foods.FirstOrDefault(f => f.FoodId == Food_Id);
+
+            if (foodDis is null)
+            {
+                if (checkAnimalID is null || checkFoodID is null)
+                {
+                    return NotFound();
+                }
+                
                 return BadRequest();
-            if (checkA.FoodId != checkF.FoodId)
-                return NotFound();
-            var result= $"FoodDistribution AnimalId: {checkA.AnimalId}, idF: {checkA.FoodId}, quantity: {checkA.Quantity}, IsEnough:{checkA.IsEnough}";
+            }
+
+            var result= $"FoodDistribution AnimalId: {foodDis.AnimalId}, idF: {foodDis.FoodId}, quantity: {foodDis.Quantity}, IsEnough:{foodDis.IsEnough}";
             return Ok(result);
         }
         
@@ -80,6 +89,7 @@ namespace Practice_API.Controllers
         [HttpPost("Animal/Post")]
         public async Task<ActionResult<AnimalDto>> CreateAnimal(AnimalInputDto input)
         {
+            
             var inputAnimal = new AnimalDto()
             {
                 Name = input.Name,
@@ -161,7 +171,7 @@ namespace Practice_API.Controllers
         
         
         // PUT Animal
-        [HttpPut("Animal/Put")]
+        [HttpPut("Animal/Put/{id}")]
         public async Task<ActionResult<AnimalDto>> PutAnimal(int id, AnimalInputDto input)
         {
           
@@ -179,7 +189,7 @@ namespace Practice_API.Controllers
         }
         
         // PUT Food
-        [HttpPut("Food/Put")]
+        [HttpPut("Food/Put/{id}")]
         public async Task<ActionResult<FoodDto>> PutFood(int id, FoodInputDto input)
         {
             var food = _context.Foods.Where(p => p.FoodId == id).FirstOrDefault<Food>();
@@ -194,7 +204,7 @@ namespace Practice_API.Controllers
         }
         
         // PUT FoodDistribution
-        [HttpPut("FoodDistribution/Put")]
+        [HttpPut("FoodDistribution/Put/{idA}/{idF}")]
         public async Task<ActionResult<FoodDistributionDto>> PutFoodDistribution(int idA,int idF, FoodDistributionUpdateDto input)
         {
             var foodDis = _context.FoodDistributions.Where(p => p.AnimalId == idA)
@@ -214,7 +224,7 @@ namespace Practice_API.Controllers
         }
 
         // DELETE Animal
-        [HttpDelete("Animal/Delete")]
+        [HttpDelete("Animal/Delete/{id}")]
         public async Task<ActionResult<Animal>> DeleteAnimal(int id)
         {
             var delAnimal = await  _context.Animals.FindAsync(id);
@@ -229,7 +239,7 @@ namespace Practice_API.Controllers
         }
         
         // DELETE Food
-        [HttpDelete("Food/Delete")]
+        [HttpDelete("Food/Delete/{id}")]
         public async Task<ActionResult<Food>> DeleteFood(int id)
         {
             var delFood = await  _context.Foods.FindAsync(id);
@@ -244,7 +254,7 @@ namespace Practice_API.Controllers
         }
         
         // DELETE FoodDistribution
-        [HttpDelete("FoodDistribution/Delete")]
+        [HttpDelete("FoodDistribution/Delete/{idA}/{idF}")]
         public async Task<ActionResult<FoodDistributionDto>> DelFoodDistribution(int idA,int idF)
         {
             var foodDis = _context.FoodDistributions.Where(p => p.AnimalId == idA)
