@@ -1,0 +1,18 @@
+﻿version: '3.8'
+
+services:
+  dbStudent:
+    image: mysql:8.0.27
+    
+    volumes:
+      - mysql-data-student:/var/lib/mysql
+    
+    environment:
+      MYSQL_ROOT_PASSWORD: "khoa444"
+      MYSQL_DATABASE: "Student"
+    
+    ports:
+      - "3444:3306"
+
+volumes:
+  mysql-data-student: 
