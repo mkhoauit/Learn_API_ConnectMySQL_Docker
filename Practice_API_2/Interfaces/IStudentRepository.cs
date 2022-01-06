@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Practice_API_2.Classes;
 
@@ -8,21 +8,21 @@ namespace Practice_API_2.Interfaces
     {
         Task<IEnumerable<Student>> GetStudents();
         Task<Student> GetStudent(int id);
-        Task<Student> AddStudent(Student student);
-        Task<Student> UpdateStudent(Student student);
-        Task<Student> DeleteStudent(Student student);
+        Task<Student> AddStudent(StudentInputDto student);
+        Task<Student> UpdateStudent(int id,StudentInputDto student);
+        Task<Student> DeleteStudent(int id);
         
         Task<IEnumerable<Subject>> GetSubjects();
         Task<Subject> GetSubject(int id);
-        Task<Subject> AddSubject(Subject subject);
-        Task<Subject> UpdateSubject(Subject subject);
-        Task<Subject> DeleteSubject(Subject subject);
+        Task<Subject> AddSubject(SubjectInputDto subject);
+        Task<Subject> UpdateSubject(int id, SubjectInputDto subject);
+        Task<Subject> DeleteSubject(int id);
         
-        Task<IEnumerable<StudentClass>> GetStudentClasess();
+        Task<IEnumerable<StudentClass>> GetStudentClases();
         Task<StudentClass> GetStudentClass(int idStu,int idSub);
-        Task<StudentClass> AddStudentClass(StudentClass studentClass);
-        Task<StudentClass> UpdateStudentClass(StudentClass studentClass);
-        Task<StudentClass> DeleteStudentClass(StudentClass studentClass);
+        Task<StudentClass> AddStudentClass(StudentClassDto studentClass);
+        Task<StudentClass> UpdateStudentClass(int idStu, int idSub, StudentClassInputDto studentClass);
+        Task<StudentClass> DeleteStudentClass(int idStu, int idSub);
         
     }
 }
