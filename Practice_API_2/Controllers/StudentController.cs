@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -96,7 +96,7 @@ namespace Practice_API_2.Controllers
         
         // GET ALL Subject
         [HttpGet ("Subject/All")]
-        public async Task<ActionResult<IEnumerable<Subject>>> GetSubjects()
+        public async Task<ActionResult<Subject>> GetSubjects()
         {
             return Ok(await _studentRepository.GetSubjects());
         }

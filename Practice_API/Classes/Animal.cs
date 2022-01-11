@@ -14,4 +14,6 @@ namespace Practice_API.Classes
         
         public List<FoodDistribution> FoodDistributions { get; set;}
     }
+    
+   
 }

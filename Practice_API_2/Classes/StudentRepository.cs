@@ -74,7 +74,7 @@ namespace Practice_API_2.Classes
 
         public async Task<Subject> GetSubject(int id)
         {
-            return await _context.Subjects.FirstOrDefaultAsync(s=>s.SubjectId == id);
+            return await  _context.Subjects.FirstOrDefaultAsync(s=>s.SubjectId == id);
         }
 
         public async Task<Subject> AddSubject(SubjectInputDto inputDto)

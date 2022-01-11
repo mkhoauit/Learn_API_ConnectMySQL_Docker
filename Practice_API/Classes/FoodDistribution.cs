@@ -5,7 +5,6 @@ namespace Practice_API.Classes
 {
     public class FoodDistribution : IFoodDistribution
     {
-        
         public int AnimalId { get; set; }
         public int FoodId { get; set; }
         public int Quantity { get; set; }
