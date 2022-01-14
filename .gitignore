@@ -452,3 +452,13 @@ $RECYCLE.BIN/
 !.vscode/tasks.json
 !.vscode/launch.json
 !.vscode/extensions.json
+/Practice_API.Test/bin
+/Practice_API.Test/obj
+/Practice_API/obj
+/Practice_API/bin
+/Practice_API_2/bin
+/Practice_API_2/obj
+/Practice_API_2.Test/obj
+/Practice_API_2.Test/bin
+/Test_API/bin
+/Test_API/obj

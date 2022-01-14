@@ -20,7 +20,7 @@ namespace Practice_API_2.Test
         public async Task GetAll()
         {
             //Arrange
-            var client = new IntegrationTest();
+            
             //Action
             var response = await _client.GetAsync("Student/All");
             //Assert
