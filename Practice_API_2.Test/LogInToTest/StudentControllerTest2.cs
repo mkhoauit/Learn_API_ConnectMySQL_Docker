@@ -13,7 +13,7 @@ using Xunit;
 
 namespace Practice_API_2.Test
 {
-    public class StudentControllerTests2 : IntegrationTest
+    public class StudentControllerTest2 : IntegrationTest
     {
         
         [Fact]
@@ -32,7 +32,7 @@ namespace Practice_API_2.Test
         public async Task GetByID()
         {
             //Arrange
-            await AuthenticateAsync();
+           
             int id = 1;
             //Action
             var response = await _client.GetAsync($"Student/Get/{id}");

@@ -15,16 +15,18 @@ namespace Practice_API_2.Classes
 
         protected override void OnConfiguring(DbContextOptionsBuilder options)
         {
-            options.UseMySQL($"server=localhost;port=3444;userid=root;password=khoa444;database=Student");
-           
+            if (!options.IsConfigured)
+            {
+                options.UseMySQL($"server=localhost;port=3444;userid=root;password=khoa444;database=Student");
+            }
         }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<Student>().HasData
             (
-                new Student() { StudentId = 1, StudentName = "Tom", Gender = "Male",isDeleted = false},
-                new Student() { StudentId = 2, StudentName = "Jerry",Gender = "Male",isDeleted = false},
-                new Student() { StudentId = 3, StudentName = "Max",Gender = "Female",isDeleted = false}
+                new Student() { StudentId = 1, StudentName = "Tom", Gender = "Male",DateOfBirth = DateTime.Parse("1986-01-01") ,isDeleted = false},
+                new Student() { StudentId = 2, StudentName = "Jerry",Gender = "Male",DateOfBirth = DateTime.Parse("1986-05-01"),isDeleted = false},
+                new Student() { StudentId = 3, StudentName = "Max",Gender = "Female",DateOfBirth = DateTime.Parse("1986-07-01"),isDeleted = false}
             );
             modelBuilder.Entity<Subject>().HasData
             (

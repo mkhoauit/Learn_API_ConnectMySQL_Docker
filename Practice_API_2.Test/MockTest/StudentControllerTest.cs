@@ -15,12 +15,12 @@ using static System.Threading.Tasks.Task;
 
 namespace Practice_API_2.Test
 {
-    public class StudentControllertest
+    public class StudentControllerTest
     {
         private Mock<IStudentRepository> studentsRepoMock;
         private StudentController _controller;
 
-        public StudentControllertest()
+        public StudentControllerTest()
         {
             studentsRepoMock = new Mock<IStudentRepository>();
             _controller = new StudentController(studentsRepoMock.Object);
