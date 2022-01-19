@@ -18,7 +18,7 @@ namespace Practice_API_2.Interfaces
         Task<Subject> UpdateSubject(int id, SubjectInputDto subject);
         Task<Subject> DeleteSubject(int id);
         
-        Task<IEnumerable<StudentClass>> GetStudentClases();
+        Task<IEnumerable<StudentClass>> GetStudentClasses();
         Task<StudentClass> GetStudentClass(int idStu,int idSub);
         Task<StudentClass> AddStudentClass(StudentClassDto studentClass);
         Task<StudentClass> UpdateStudentClass(int idStu, int idSub, StudentClassInputDto studentClass);

@@ -115,7 +115,7 @@ namespace Practice_API_2.Classes
         }
 
         
-        public async Task<IEnumerable<StudentClass>> GetStudentClases()
+        public async Task<IEnumerable<StudentClass>> GetStudentClasses()
         {
             return await _context.StudentClasses.ToListAsync();
         }

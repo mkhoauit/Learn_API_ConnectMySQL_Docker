@@ -13,10 +13,10 @@ using Xunit;
 
 namespace Practice_API_2.Test
 {
-    public class StudentControllerTest2 : IntegrationTest
+    public class StudentControllerTest2
     {
+        /*
         
-        [Fact]
         public async Task GetAll()
         {
             //Arrange
@@ -42,5 +42,6 @@ namespace Practice_API_2.Test
 
         }
         
+    }*/
     }
 }

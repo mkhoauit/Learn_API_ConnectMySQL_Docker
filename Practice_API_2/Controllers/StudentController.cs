@@ -173,7 +173,7 @@ namespace Practice_API_2.Controllers
         [HttpGet ("StudentClass/All")]
         public async Task<ActionResult<IEnumerable<StudentClass>>> GetStudentClases()
         {
-            return Ok(await _studentRepository.GetStudentClases());
+            return Ok(await _studentRepository.GetStudentClasses());
         }
         
         // GET  StudentClass by ID
